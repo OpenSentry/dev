@@ -74,13 +74,13 @@ secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/dev/ -ty
 curl -X DELETE http://oauth.localhost:4445/oauth2/auth/sessions/consent?subject=user1 -H 'Accept: application/json'
 
 ## Token introspection
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify token introspect $TOKEN
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify token introspect $TOKEN
 
 ## List clients
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify clients list
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify clients list
 
 ## Show client
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify clients get $CLIENT_ID
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify clients get $CLIENT_ID
 
 ## Delete client
-docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network trusted oryd/hydra clients delete $CLIENT_ID
+docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network opensentry_trusted oryd/hydra clients delete $CLIENT_ID
