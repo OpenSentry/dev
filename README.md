@@ -57,7 +57,7 @@ docker-compose -f docker-compose.services.yml logs -f idp idpui aap aapui meui h
 
 To change all configurations urls (localhost), execute within the opensentry-dev root directory:
 ```bash
-find config oathkeeper -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
+find config -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
 ```
 
 ### Generate random secrets
