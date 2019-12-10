@@ -41,3 +41,5 @@ serve:
       path: /srv/certs/idpui-key.pem
 session:
   authkey: kENBedOvRJGjaQEtuS0YT8OdFzT/VxZCiVO7aGX8+SsMOhfJAovpkU63ZJxsk0eACXnRgwNW8qVMPeqypLRHXQ==
+provider:
+  name: Identity Provider
