@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+
+  aap-migrate:
+    build:
+      context: ../../aap
+      dockerfile: Dockerfile
+    entrypoint: ""
+    command:
+      go run main.go --migrate
+    networks:
+      - lockdown
+    environment:
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    volumes:
+      - ../../aap/model:/go/src/github.com/opensentry/aap/model
+      - ../config/discovery.yml:/discovery.yml
+      - ../config/aap.yml:/app.yml
+    #user: "1000"
+    restart: "no"
+
+networks:
+  lockdown: # No external network allowed - used for storage services
+    name: opensentry_lockdown
+    internal: true

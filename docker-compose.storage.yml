@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+
+  mysqld:
+    image: mysql:8.0
+    volumes:
+       - ./mysqldata:/var/lib/mysql
+    env_file:
+      - ./config/mysql.env
+    networks:
+      - lockdown
+    user: "1000"
+    expose:
+      - 3306
+    restart: on-failure
+
+  neo4j:
+    image: neo4j:3.5.0
+    deploy:
+      endpoint_mode: dnsrr
+    volumes:
+      - ./neo4jdata:/data
+    env_file:
+      - ./config/neo4j.env
+    networks:
+      - lockdown
+      - public
+    expose:
+      - 7474
+      - 7687
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    user: "1000"
+    restart: on-failure
+
+networks:
+  lockdown: # No external network allowed for storage services
+    name: opensentry_lockdown
+    internal: true
+  public: # required to be able to use localhost:7474 for neo4j debugging
+    name: public

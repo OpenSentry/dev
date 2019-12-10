@@ -1,1 +1,97 @@
-# opensentry-dev
+# Getting started
+
+To get up and running a machine docker and docker-compose is required. Good guides are for this are
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04
+https://docs.docker.com/compose/install/
+
+
+Download the idp project
+```bash
+mkdir git
+cd git
+git clone https://github.com/opensentry/idp.git
+git clone https://github.com/opensentry/idpui.git
+git clone https://github.com/opensentry/aap.git
+git clone https://github.com/opensentry/aapui.git
+git clone https://github.com/opensentry/meui.git
+git clone https://github.com/opensentry/opensentry-dev.git
+cd opensentry-dev
+```
+
+
+## Production [Under construction]
+...
+
+## Development
+To get up and running in development mode on localhost, you can follow this process:
+
+Change `/etc/hosts` on the machine to include
+```
+127.0.0.1     localhost oauth.localhost id.localhost aa.localhost me.localhost
+```
+
+### Bring all services up
+```bash
+docker-compose -f migrations/docker-compose.migrate.certs.yml up && \
+docker-compose -f docker-compose.storage.yml up -d && \
+docker-compose -f docker-compose.services.yml build aap && \
+docker-compose -f docker-compose.services.yml build idp && \
+docker-compose -f docker-compose.services.yml build idpui && \
+docker-compose -f docker-compose.services.yml build aapui && \
+docker-compose -f docker-compose.me.single.yml build && \
+docker-compose -f migrations/docker-compose.migrate.hydra.yml up && \
+docker-compose -f migrations/docker-compose.migrate.idp.yml up && \
+docker-compose -f migrations/docker-compose.migrate.aap.yml up && \
+docker-compose -f docker-compose.services.yml up -d && sleep 5 &&
+docker-compose -f migrations/docker-compose.migrate.clients.yml up
+```
+
+### No migration/building version
+```bash
+docker-compose -f docker-compose.storage.yml up -d && \
+docker-compose -f docker-compose.services.yml up -d
+```
+
+### Commands to view logs
+docker-compose -f mysql/docker-compose.dev.yml logs -f
+docker-compose -f neo4j/docker-compose.dev.yml logs -f
+docker-compose -f oathkeeper/docker-compose.dev.yml logs -f
+docker-compose -f hydra/docker-compose.dev.yml logs -f
+docker-compose -f postfix/docker-compose.dev.yml logs -f
+docker-compose -f idp/docker-compose.dev.yml logs -f
+docker-compose -f aap/docker-compose.dev.yml logs -f
+
+
+
+### fast replace
+
+To change all configurations urls (localhost), execute within the opensentry-dev root directory:
+```bash
+find config oathkeeper -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
+```
+
+### Generate random secrets
+
+```
+grep -sire "\byoureallyneedtochangethis_32\b" --exclude README\.md * | cut -d : -f 1 | while read line; do sed -i -e "0,/\byoureallyneedtochangethis_32\b/ s/\byoureallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" $line; done
+grep -sire "\byoureallyneedtochangethis_64\b" --exclude README\.md * | cut -d : -f 1 | while read line; do sed -i -e "0,/\byoureallyneedtochangethis_64\b/ s/\byoureallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" $line; done
+secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/dev/ -type f ! -name README\.md -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
+secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/dev/ -type f ! -name README\.md -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
+```
+
+# Useful hydra terminal commands
+
+curl -X DELETE http://oauth.localhost:4445/oauth2/auth/sessions/consent?subject=user1 -H 'Accept: application/json'
+
+## Token introspection
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify token introspect $TOKEN
+
+## List clients
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify clients list
+
+## Show client
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify clients get $CLIENT_ID
+
+## Delete client
+docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network trusted oryd/hydra clients delete $CLIENT_ID

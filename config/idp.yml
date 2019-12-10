@@ -1,0 +1,87 @@
+ban:
+  usernames: ./banned_usernames
+crypto:
+  keys:
+    clients:
+    - youreallyneedtochangethis_32
+    totp:
+    - youreallyneedtochangethis_32
+csrf:
+  authkey: 2z+uF6P3m+EHL7Y8NdYELEFg847p4qnz+0/7ABm0VNUitf+hdgQZP7iWZxCnlgcyylLPU8P1IMiJt5v1BM+1fA==
+hydra:
+  session:
+    timeout: 1209600
+id: e044d683-5daf-42af-a31a-938094611be9
+invite:
+  template:
+    email:
+      file: emails/invite.md
+      subject: Invitation from Identity Provider
+  ttl: 86400
+  url: https://id.localhost/claim
+log:
+  debug: 1
+  format: default
+mail:
+  smtp:
+    host: postfix:587
+    password: mail_youreallyneedtochangethis_64
+    skip_tls_verify: 1
+    user: idp@id.localhost
+migration:
+  data:
+    path: ./model/data.cyp
+  schema:
+    path: ./model/schema.cyp
+nats:
+  url: nats://J6mLcX52MRHzYbzmmdjXJeePA8g9GywL@nats:4222
+neo4j:
+  debug: 0
+  password: neo4j_youreallyneedtochangethis_64
+  uri: bolt://neo4j:7687
+  username: neo4j
+oauth2:
+  client:
+    id: 8dc7ea3e-c61a-47cd-acf2-2f03615e3f8b
+    secret: sGIFVjBKPj6uFMKNDOo50pAaUnINqFyh5LOOrz9Exsbvg2Ly9U/ADgnW/CVkCFTBXfysqoos7M5aOrpTq3BbGA==
+  scopes:
+    required:
+    - hydra
+    - aap:create:entities
+    - aap:create:grants
+provider:
+  email: identity-provider@id.localhost
+  name: Identity Provider
+serve:
+  public:
+    port: 443
+  tls:
+    cert:
+      path: /srv/certs/idp-cert.pem
+    key:
+      path: /srv/certs/idp-key.pem
+session:
+  authkey: dgEjLVibrM6p1uJj4lwndB0/bGLLuxXZr7y/f32kGrBAjjlpwuLNzyM0OL8XdKzncJpPCR6ag/3q4OxV6yM6mw==
+templates:
+  authenticate:
+    email:
+      subject: Verification code from Identity Provider
+      templatefile: emails/authenticate.md
+  delete:
+    email:
+      subject: Delete confirmation code from Identity Provider
+      templatefile: emails/delete.md
+  emailchange:
+    email:
+      subject: Email confirmation code from Identity Provider
+      templatefile: emails/emailchange.md
+  emailconfirm:
+    email:
+      subject: Email confirmation code from Identity Provider
+      templatefile: emails/emailconfirm.md
+  recover:
+    email:
+      subject: Recovery code from Identity Provider
+      templatefile: emails/recover.md
+totp:
+  cryptkey: youreallyneedtochangethis_32

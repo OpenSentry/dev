@@ -1,0 +1,35 @@
+csrf:
+  authkey: jZYtH7WGsUMjpryPnn3x2SkzP/mTkzvqb1s69t4DdDZsRxnkOhsGfYm8fwHx9XOYFlmkT/F6THIVo7U56x5YSQ==
+id: a73b547b-f26d-487b-9e3a-2574fe3403fe
+log:
+  debug: 1
+  format: default
+migration:
+  data:
+    path: ./model/data.cyp
+  schema:
+    path: ./model/schema.cyp
+nats:
+  url: nats://J6mLcX52MRHzYbzmmdjXJeePA8g9GywL@nats:4222
+neo4j:
+  debug: 0
+  password: neo4j_youreallyneedtochangethis_64
+  uri: bolt://neo4j:7687
+  username: neo4j
+oauth2:
+  client:
+    id: b27062eb-090a-4c9a-a982-ff47b8c7f916
+    secret: oXhvn/8JQnnbGUTr16GdD3u6y+AlWqW31EvsQPhMiSub/9Q2KbAiO+6l9PdDkfRF0Vr9QpQEA3T2kkuYy/hxPw==
+  scopes:
+    required:
+    - hydra
+serve:
+  public:
+    port: 443
+  tls:
+    cert:
+      path: /srv/certs/aap-cert.pem
+    key:
+      path: /srv/certs/aap-key.pem
+session:
+  authkey: xgd9u1ci9XF6KJomb5dkeYGZjr6onAtLNzlwEV6C7W9BJcj6cxHk1976ki2q53hmZ/fpNs1PJKv334ZrqlYDgw==

@@ -1,0 +1,327 @@
+version: '3.7'
+
+services:
+
+  postfix:
+    image: charmixer/dev-postfix:0.0.0
+    expose:
+      - 25
+      - 587
+    volumes:
+      - ./postfix/domainkeys:/etc/opendkim/domainkeys
+      - ./certs/postfix-key.pem:/etc/postfix/certs/postfix-key.key
+      - ./certs/postfix-cert.pem:/etc/postfix/certs/postfix-cert.crt
+      - ~/Maildir/dev:/root/Maildir
+    env_file:
+      - ./config/postfix.env
+    networks:
+      - trusted
+    restart: on-failure
+
+  nats:
+    image: nats:2.0.4
+    command: -c nats-server.conf -DV --auth J6mLcX52MRHzYbzmmdjXJeePA8g9GywL
+    expose:
+      - "4222"
+      - "8222"
+    ports:
+      - "4222:4222"
+    hostname: nats-server
+    user: "1000"
+    networks:
+      - trusted
+
+  oathkeeper:
+    image: oryd/oathkeeper:v0.16.0
+    volumes:
+      - ./config/oathkeeper-config.yml:/config.yml # main configuration
+      - ./config/oathkeeper-rules.json:/rules.json # access rules
+      - ./config/oathkeeper-rules-dev.json:/rules-dev.json # access rules specific for dev
+        # docker run oryd/oathkeeper:v0.16.0 credentials generate --alg RS256 > oathkeeper-jwks.json
+      - ./config/oathkeeper-jwks.json:/jwks.json # The id_token mutator creates a signed JSON Web Token. For that to work a public/private key is required, this is what that is.
+
+        # Certificate
+      - ./certs/oath-key.pem:/srv/certs/oathkeeper-key.pem
+      - ./certs/oath-cert.pem:/srv/certs/oathkeeper-cert.pem
+
+        # trusting services
+      - ./certs/hydra-cert.pem:/etc/ssl/certs/hydra.pem
+      - ./certs/idpui-cert.pem:/etc/ssl/certs/idpui.pem
+      - ./certs/idp-cert.pem:/etc/ssl/certs/idp.pem
+      - ./certs/aapui-cert.pem:/etc/ssl/certs/aapui.pem
+      - ./certs/aap-cert.pem:/etc/ssl/certs/aap.pem
+      - ./certs/meui-cert.pem:/etc/ssl/certs/meui.pem
+
+    command:
+      serve all --config "/config.yml"
+    networks:
+      trusted:
+        aliases:
+          - oauth.localhost
+          - id.localhost
+          - aa.localhost
+      untrusted:
+        aliases:
+          - oauth.localhost
+          - id.localhost
+          - aa.localhost
+    expose:
+      - "443"
+      - "4456"
+    ports:
+      - "443:443" # proxy
+    sysctls: # allows unprivileged user to listen on 443 (works on linux, otherwise use root user)
+      net.ipv4.ip_unprivileged_port_start: 0
+    user: "1000"
+    restart: on-failure
+
+  hydra:
+    image: oryd/hydra:v1.0.9
+    tty: true
+    command:
+      serve all --config /hydra.yml
+    networks:
+      - trusted
+      - lockdown
+    volumes:
+      - ./config/hydra.yml:/hydra.yml
+      - ./certs/hydra-key.pem:/srv/certs/hydra-key.pem
+      - ./certs/hydra-cert.pem:/srv/certs/hydra-cert.pem
+    expose:
+      - 443
+      - 4445
+    sysctls: # allows unprivileged user to listen on 443 (works on linux, otherwise use root user)
+      net.ipv4.ip_unprivileged_port_start: 0
+    depends_on:
+      - oathkeeper
+    user: "1000"
+    restart: on-failure
+
+  idp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        monitor: 30s
+        order: stop-first
+        failure_action: rollback
+        order: start-first
+    environment:
+      - SRC=idp
+      - SERVE_PUBLIC_PORT=443
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    networks:
+      - trusted
+      - lockdown
+    volumes:
+        # Source code
+      - ../idp:/go/src/github.com/opensentry/idp
+      - ../idpui:/go/src/github.com/opensentry/idpui
+      - ../aap:/go/src/github.com/opensentry/aap
+      - ../aapui:/go/src/github.com/opensentry/aapui
+
+        # Configurations
+      - ./config/discovery.yml:/discovery.yml
+      - ./config/idp.yml:/app.yml
+      - ./config/banned-usernames:/ban/usernames
+
+        # Certificate
+      - ./certs/idp-key.pem:/srv/certs/idp-key.pem
+      - ./certs/idp-cert.pem:/srv/certs/idp-cert.pem
+
+        # Trust
+      - ./certs/hydra-cert.pem:/etc/ssl/certs/hydra-cert.pem
+      - ./certs/oath-cert.pem:/etc/ssl/certs/oath-cert.pem
+    depends_on:
+      - hydra
+      - nats
+    #user: "1000"
+    restart: on-failure
+
+  idpui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        monitor: 30s
+        order: stop-first
+        failure_action: rollback
+        order: start-first
+    environment:
+      - SRC=idpui
+      - SERVE_PUBLIC_PORT=443
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    networks:
+      - trusted
+    volumes:
+        # Source code
+      - ../idp:/go/src/github.com/opensentry/idp
+      - ../idpui:/go/src/github.com/opensentry/idpui
+      - ../aap:/go/src/github.com/opensentry/aap
+      - ../aapui:/go/src/github.com/opensentry/aapui
+
+        # Configuration
+      - ./config/discovery.yml:/discovery.yml
+      - ./config/idpui.yml:/app.yml
+
+        # Certificates
+      - ./certs/idpui-key.pem:/srv/certs/idpui-key.pem
+      - ./certs/idpui-cert.pem:/srv/certs/idpui-cert.pem
+
+        # Trust
+      - ./certs/oath-cert.pem:/etc/ssl/certs/oath-cert.pem
+    depends_on:
+      - idp
+    #user: "1000"
+    restart: on-failure
+
+  aap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        monitor: 30s
+        order: stop-first
+        failure_action: rollback
+        order: start-first
+    environment:
+      - SRC=aap
+      - SERVE_PUBLIC_PORT=443
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    networks:
+      - trusted
+      - lockdown
+    volumes:
+        # Source code
+      - ../idp:/go/src/github.com/opensentry/idp
+      - ../idpui:/go/src/github.com/opensentry/idpui
+      - ../aap:/go/src/github.com/opensentry/aap
+      - ../aapui:/go/src/github.com/opensentry/aapui
+
+        # Configurations
+      - ./config/discovery.yml:/discovery.yml
+      - ./config/aap.yml:/app.yml
+
+        # Certificate
+      - ./certs/aap-key.pem:/srv/certs/aap-key.pem
+      - ./certs/aap-cert.pem:/srv/certs/aap-cert.pem
+
+        # Trust
+      - ./certs/hydra-cert.pem:/etc/ssl/certs/hydra-cert.pem
+      - ./certs/oath-cert.pem:/etc/ssl/certs/oath-cert.pem
+    depends_on:
+      - hydra
+      - nats
+    #user: "1000"
+    restart: on-failure
+
+  aapui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 15s
+        monitor: 30s
+        order: stop-first
+        failure_action: rollback
+        order: start-first
+    environment:
+      - SRC=aapui
+      - SERVE_PUBLIC_PORT=443
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    networks:
+      - trusted
+    volumes:
+        # Source code
+      - ../idp:/go/src/github.com/opensentry/idp
+      - ../idpui:/go/src/github.com/opensentry/idpui
+      - ../aap:/go/src/github.com/opensentry/aap
+      - ../aapui:/go/src/github.com/opensentry/aapui
+
+        # Configurations
+      - ./config/discovery.yml:/discovery.yml
+      - ./config/aapui.yml:/app.yml
+
+        # Certificate
+      - ./certs/aapui-key.pem:/srv/certs/aapui-key.pem
+      - ./certs/aapui-cert.pem:/srv/certs/aapui-cert.pem
+
+        # Trust
+      - ./certs/oath-cert.pem:/etc/ssl/certs/oath-cert.pem
+    depends_on:
+      - aap
+    #user: "1000"
+    restart: on-failure
+
+  meui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    environment:
+      - SRC=meui
+      - SERVE_PUBLIC_PORT=443
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    networks:
+      - untrusted
+    volumes:
+        # Source code
+      - ../idp:/go/src/github.com/opensentry/idp
+      - ../idpui:/go/src/github.com/opensentry/idpui
+      - ../aap:/go/src/github.com/opensentry/aap
+      - ../aapui:/go/src/github.com/opensentry/aapui
+      - ../meui:/go/src/github.com/opensentry/meui
+
+        # Configurations
+      - ./config/discovery.yml:/discovery.yml
+      - ./config/meui.yml:/app.yml
+
+        # Certificate
+      - ./certs/meui-key.pem:/srv/certs/meui-key.pem
+      - ./certs/meui-cert.pem:/srv/certs/meui-cert.pem
+
+        # Trust
+      - ./certs/oath-cert.pem:/etc/ssl/certs/oath-cert.pem
+    depends_on:
+      - idp
+      - aap
+      - hydra
+
+networks:
+  trusted:
+    name: opensentry_trusted
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+  untrusted:
+    name: opensentry_untrusted
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+  lockdown: # No external network allowed - used for storage services
+    name: opensentry_lockdown
+    internal: true

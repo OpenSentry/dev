@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+
+  idp-migrate:
+    build:
+      context: ../../idp
+      dockerfile: Dockerfile
+    entrypoint: ""
+    command:
+      go run main.go --migrate
+    networks:
+      - lockdown
+    environment:
+      - CONFIG_DISCOVERY_PATH=/discovery.yml
+      - CONFIG_APP_PATH=/app.yml
+    volumes:
+      - ../../idp/model:/go/src/github.com/opensentry/idp/model
+      - ../config/discovery.yml:/discovery.yml
+      - ../config/idp.yml:/app.yml
+    #user: "1000"
+    restart: "no"
+
+networks:
+  lockdown: # No external network allowed - used for storage services
+    name: opensentry_lockdown
+    internal: true
