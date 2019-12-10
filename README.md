@@ -35,15 +35,11 @@ Change `/etc/hosts` on the machine to include
 ```bash
 docker-compose -f migrations/docker-compose.migrate.certs.yml up && \
 docker-compose -f docker-compose.storage.yml up -d && \
-docker-compose -f docker-compose.services.yml build aap && \
-docker-compose -f docker-compose.services.yml build idp && \
-docker-compose -f docker-compose.services.yml build idpui && \
-docker-compose -f docker-compose.services.yml build aapui && \
-docker-compose -f docker-compose.me.single.yml build && \
 docker-compose -f migrations/docker-compose.migrate.hydra.yml up && \
 docker-compose -f migrations/docker-compose.migrate.idp.yml up && \
 docker-compose -f migrations/docker-compose.migrate.aap.yml up && \
-docker-compose -f docker-compose.services.yml up -d && sleep 5 &&
+docker build   -t opensentry-dev -f Dockerfile . --no-cache  && \
+docker-compose -f docker-compose.services.yml up -d && \
 docker-compose -f migrations/docker-compose.migrate.clients.yml up
 ```
 
@@ -54,14 +50,7 @@ docker-compose -f docker-compose.services.yml up -d
 ```
 
 ### Commands to view logs
-docker-compose -f mysql/docker-compose.dev.yml logs -f
-docker-compose -f neo4j/docker-compose.dev.yml logs -f
-docker-compose -f oathkeeper/docker-compose.dev.yml logs -f
-docker-compose -f hydra/docker-compose.dev.yml logs -f
-docker-compose -f postfix/docker-compose.dev.yml logs -f
-docker-compose -f idp/docker-compose.dev.yml logs -f
-docker-compose -f aap/docker-compose.dev.yml logs -f
-
+docker-compose -f docker-compose.services.yml logs -f idp idpui aap aapui meui hydra
 
 
 ### fast replace
