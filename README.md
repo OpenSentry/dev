@@ -57,7 +57,7 @@ docker-compose -f docker-compose.services.yml logs -f idp idpui aap aapui meui h
 
 To change all configurations urls (localhost), execute within the opensentry-dev root directory:
 ```bash
-find config oathkeeper -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
+find config -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
 ```
 
 ### Generate random secrets
@@ -65,8 +65,8 @@ find config oathkeeper -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s
 ```
 grep -sire "\byoureallyneedtochangethis_32\b" --exclude README\.md * | cut -d : -f 1 | while read line; do sed -i -e "0,/\byoureallyneedtochangethis_32\b/ s/\byoureallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" $line; done
 grep -sire "\byoureallyneedtochangethis_64\b" --exclude README\.md * | cut -d : -f 1 | while read line; do sed -i -e "0,/\byoureallyneedtochangethis_64\b/ s/\byoureallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" $line; done
-secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/dev/ -type f ! -name README\.md -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
-secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/dev/ -type f ! -name README\.md -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
+secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
+secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
 ```
 
 # Useful hydra terminal commands
@@ -74,13 +74,13 @@ secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/dev/ -ty
 curl -X DELETE http://oauth.localhost:4445/oauth2/auth/sessions/consent?subject=user1 -H 'Accept: application/json'
 
 ## Token introspection
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify token introspect $TOKEN
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify token introspect $TOKEN
 
 ## List clients
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify clients list
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify clients list
 
 ## Show client
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network trusted oryd/hydra --skip-tls-verify clients get $CLIENT_ID
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify clients get $CLIENT_ID
 
 ## Delete client
-docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network trusted oryd/hydra clients delete $CLIENT_ID
+docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network opensentry_trusted oryd/hydra clients delete $CLIENT_ID
