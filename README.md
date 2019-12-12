@@ -38,7 +38,7 @@ docker-compose -f docker-compose.storage.yml up -d && \
 docker-compose -f migrations/docker-compose.migrate.hydra.yml up && \
 docker-compose -f migrations/docker-compose.migrate.idp.yml up && \
 docker-compose -f migrations/docker-compose.migrate.aap.yml up && \
-docker-compose -f migrations/docker-compose.migrate.clients.yml up \
+docker-compose -f migrations/docker-compose.migrate.clients.yml up && \
 docker build   -t opensentry-dev -f Dockerfile . --no-cache  && \
 docker-compose -f docker-compose.services.yml up -d
 ```
