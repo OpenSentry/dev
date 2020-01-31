@@ -67,7 +67,7 @@ rows:
   - client: #meui
       id: 20f2bfc6-44df-424a-b490-c024d009892c
       name: meui
-      scopes: openid offline idp:read:identities idp:read:humans idp:update:humans idp:create:humans:recover idp:create:invites idp:read:invites idp:create:invites:send idp:create:invites:claim idp:create:resourceservers idp:read:resourceservers idp:delete:resourceservers idp:create:clients idp:read:clients idp:delete:clients aap:read:scopes aap:create:scopes aap:update:scopes aap:read:grants aap:create:grants aap:delete:grants aap:read:publishes aap:create:publishes aap:delete:publishes aap:read:consents aap:delete:consents aap:create:subscriptions aap:delete:subscriptions aap:read:subscriptions idp:create:roles idp:read:roles idp:delete:roles aap:create:shadows aap:read:shadows aap:delete:shadows
+      scopes: openid offline idp:read:identities idp:read:humans idp:update:humans idp:create:humans:recover idp:create:invites idp:read:invites idp:create:invites:send idp:create:invites:claim idp:create:resourceservers idp:read:resourceservers idp:delete:resourceservers idp:create:clients idp:update:clients idp:read:clients idp:delete:clients aap:read:scopes aap:create:scopes aap:update:scopes aap:read:grants aap:create:grants aap:delete:grants aap:read:publishes aap:create:publishes aap:delete:publishes aap:read:consents aap:delete:consents aap:create:subscriptions aap:delete:subscriptions aap:read:subscriptions idp:create:roles idp:read:roles idp:delete:roles aap:create:shadows aap:read:shadows aap:delete:shadows
       grantTypes:
         - authorization_code
         - refresh_token

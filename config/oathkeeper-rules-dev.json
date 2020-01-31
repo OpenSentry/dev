@@ -98,6 +98,20 @@
     "mutator": { "handler": "noop" }
   },
   {
+    "id": "meui/clients/edit",
+    "upstream": {
+      "url": "https://meui",
+      "preserve_host": false
+    },
+    "match": {
+      "url": "https://me.localhost/clients/edit</?>",
+      "methods": ["GET", "POST"]
+    },
+    "authenticators": [{ "handler": "noop" }],
+    "authorizer": { "handler": "allow" },
+    "mutator": { "handler": "noop" }
+  },
+  {
     "id": "meui/clients/delete",
     "upstream": {
       "url": "https://meui",

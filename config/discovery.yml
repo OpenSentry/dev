@@ -14,6 +14,7 @@ meui:
       clients:
         collection: /clients
         delete: /clients/delete
+        edit: /clients/edit
       client: /client
       resourceservers:
         collection: /resourceservers
