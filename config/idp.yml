@@ -35,11 +35,8 @@ migration:
     path: ./model/schema.cyp
 nats:
   url: nats://J6mLcX52MRHzYbzmmdjXJeePA8g9GywL@nats:4222
-neo4j:
-  debug: 0
-  password: neo4j_youreallyneedtochangethis_64
-  uri: bolt://neo4j:7687
-  username: neo4j
+db:
+  dsn: "postgres://idp:youreallyneedtochangethis_64@idp_storage/idp"
 oauth2:
   client:
     id: 8dc7ea3e-c61a-47cd-acf2-2f03615e3f8b

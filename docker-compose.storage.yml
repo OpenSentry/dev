@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
 
-  mysqld:
+  hydra_storage:
     image: mysql:8.0
     volumes:
-       - ./mysqldata:/var/lib/mysql
+       - ./hydra_storage:/var/lib/mysql
     deploy:
       endpoint_mode: "dnsrr"
     env_file:
@@ -17,12 +17,27 @@ services:
       - 3306
     restart: on-failure
 
-  neo4j:
+  idp_storage:
+    image: mysql:8.0
+    volumes:
+       - ./idp_storage:/var/lib/mysql
+    deploy:
+      endpoint_mode: "dnsrr"
+    env_file:
+      - ./config/mysql.env
+    networks:
+      - lockdown
+    user: "1000"
+    expose:
+      - 3306
+    restart: on-failure
+
+  aap_storage:
     image: neo4j:3.5.0
     deploy:
       endpoint_mode: dnsrr
     volumes:
-      - ./neo4jdata:/data
+      - ./aap_storage:/data
     env_file:
       - ./config/neo4j.env
     networks:
