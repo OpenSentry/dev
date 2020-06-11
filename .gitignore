@@ -1,6 +1,8 @@
-mysqldata/*
-!mysqldata/.gitkeep
-neo4jdata/*
-!neo4jdata/.gitkeep
+idp_storage/*
+!idp_storage/.gitkeep
+aap_storage/*
+!aap_storage/.gitkeep
+hydra_storage/*
+!hydra_storage/.gitkeep
 certs/*
 !certs/.gitkeep
