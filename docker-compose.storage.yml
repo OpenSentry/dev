@@ -18,18 +18,18 @@ services:
     restart: on-failure
 
   idp_storage:
-    image: mysql:8.0
+    image: postgres:12
     volumes:
-       - ./idp_storage:/var/lib/mysql
+      - ./idp_storage:/var/lib/postgresql/data
     deploy:
       endpoint_mode: "dnsrr"
     env_file:
-      - ./config/mysql.env
+      - ./config/postgres.env
     networks:
       - lockdown
-    user: "1000"
+    #user: "1000:1000"
     expose:
-      - 3306
+      - 5432
     restart: on-failure
 
   aap_storage:

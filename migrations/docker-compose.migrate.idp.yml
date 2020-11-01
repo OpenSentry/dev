@@ -5,7 +5,7 @@ services:
   idp-migrate:
     build:
       context: ../../idp
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     entrypoint: ""
     command:
       go run main.go --migrate
@@ -15,7 +15,7 @@ services:
       - CONFIG_DISCOVERY_PATH=/discovery.yml
       - CONFIG_APP_PATH=/app.yml
     volumes:
-      - ../../idp/model:/go/src/github.com/opensentry/idp/model
+      - ../../idp/migrations:/go/src/github.com/opensentry/idp/migrations
       - ../config/discovery.yml:/discovery.yml
       - ../config/idp.yml:/app.yml
     #user: "1000"
