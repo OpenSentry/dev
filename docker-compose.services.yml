@@ -13,7 +13,7 @@ services:
       - ./certs/postfix-cert.pem:/etc/postfix/certs/postfix-cert.crt
       - ~/Maildir/dev:/root/Maildir
     env_file:
-      - ./config/postfix.env
+      - ./config/use/postfix.env
     networks:
       - trusted
     restart: on-failure
@@ -34,11 +34,11 @@ services:
   oathkeeper:
     image: oryd/oathkeeper:v0.16.0
     volumes:
-      - ./config/oathkeeper-config.yml:/config.yml # main configuration
-      - ./config/oathkeeper-rules.json:/rules.json # access rules
-      - ./config/oathkeeper-rules-dev.json:/rules-dev.json # access rules specific for dev
+      - ./config/use/oathkeeper-config.yml:/config.yml # main configuration
+      - ./config/use/oathkeeper-rules.json:/rules.json # access rules
+      - ./config/use/oathkeeper-rules-dev.json:/rules-dev.json # access rules specific for dev
         # docker run oryd/oathkeeper:v0.16.0 credentials generate --alg RS256 > oathkeeper-jwks.json
-      - ./config/oathkeeper-jwks.json:/jwks.json # The id_token mutator creates a signed JSON Web Token. For that to work a public/private key is required, this is what that is.
+      - ./config/use/oathkeeper-jwks.json:/jwks.json # The id_token mutator creates a signed JSON Web Token. For that to work a public/private key is required, this is what that is.
 
         # Certificate
       - ./certs/oath-key.pem:/srv/certs/oathkeeper-key.pem
@@ -84,7 +84,7 @@ services:
       - trusted
       - lockdown
     volumes:
-      - ./config/hydra.yml:/hydra.yml
+      - ./config/use/hydra.yml:/hydra.yml
       - ./certs/hydra-key.pem:/srv/certs/hydra-key.pem
       - ./certs/hydra-cert.pem:/srv/certs/hydra-cert.pem
     expose:
@@ -108,7 +108,6 @@ services:
         parallelism: 1
         delay: 15s
         monitor: 30s
-        order: stop-first
         failure_action: rollback
         order: start-first
     environment:
@@ -127,9 +126,9 @@ services:
       - ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configurations
-      - ./config/discovery.yml:/discovery.yml
-      - ./config/idp.yml:/app.yml
-      - ./config/banned-usernames:/ban/usernames
+      - ./config/use/discovery.yml:/discovery.yml
+      - ./config/use/idp.yml:/app.yml
+      - ./config/use/banned-usernames:/ban/usernames
 
         # Certificate
       - ./certs/idp-key.pem:/srv/certs/idp-key.pem
@@ -173,8 +172,8 @@ services:
       - ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configuration
-      - ./config/discovery.yml:/discovery.yml
-      - ./config/idpui.yml:/app.yml
+      - ./config/use/discovery.yml:/discovery.yml
+      - ./config/use/idpui.yml:/app.yml
 
         # Certificates
       - ./certs/idpui-key.pem:/srv/certs/idpui-key.pem
@@ -217,8 +216,8 @@ services:
       - ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configurations
-      - ./config/discovery.yml:/discovery.yml
-      - ./config/aap.yml:/app.yml
+      - ./config/use/discovery.yml:/discovery.yml
+      - ./config/use/aap.yml:/app.yml
 
         # Certificate
       - ./certs/aap-key.pem:/srv/certs/aap-key.pem
@@ -262,8 +261,8 @@ services:
       - ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configurations
-      - ./config/discovery.yml:/discovery.yml
-      - ./config/aapui.yml:/app.yml
+      - ./config/use/discovery.yml:/discovery.yml
+      - ./config/use/aapui.yml:/app.yml
 
         # Certificate
       - ./certs/aapui-key.pem:/srv/certs/aapui-key.pem
@@ -297,8 +296,8 @@ services:
       - ../meui:/go/src/github.com/opensentry/meui
 
         # Configurations
-      - ./config/discovery.yml:/discovery.yml
-      - ./config/meui.yml:/app.yml
+      - ./config/use/discovery.yml:/discovery.yml
+      - ./config/use/meui.yml:/app.yml
 
         # Certificate
       - ./certs/meui-key.pem:/srv/certs/meui-key.pem

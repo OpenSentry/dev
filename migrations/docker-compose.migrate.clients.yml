@@ -11,6 +11,7 @@ services:
       - ../config/idpui.yml:/idpui.yml
       - ../config/idp.yml:/idp.yml
       - ../config/meui.yml:/meui.yml
+      - ../config/oidc.yml:/oidc.yml
     command: hydra-tools
     networks:
       - lockdown
