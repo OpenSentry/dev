@@ -64,11 +64,16 @@ find config -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localho
 
 ### Generate random secrets
 
+*Run commands from root directory*
+
+Copy from def to use folder:
 ```
-grep -sire "\byoureallyneedtochangethis_32\b" --exclude README\.md --exclude config/def/* * | cut -d : -f 1 | while read line; do sed -i -e "0,/\byoureallyneedtochangethis_32\b/ s/\byoureallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" $line; done
-grep -sire "\byoureallyneedtochangethis_64\b" --exclude README\.md --exclude config/def/* * | cut -d : -f 1 | while read line; do sed -i -e "0,/\byoureallyneedtochangethis_64\b/ s/\byoureallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" $line; done
-secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -type d ! config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
-secrets=(mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -type d ! config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
+cp config/def/* config/use
+```
+
+```
+secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -path config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
+secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -path ./config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
 ```
 
 # Useful hydra terminal commands
