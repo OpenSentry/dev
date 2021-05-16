@@ -72,7 +72,7 @@ cp config/def/* config/use
 ```
 
 ```
-secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -path config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
+secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -path ./config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
 secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -path ./config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
 ```
 
