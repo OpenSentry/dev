@@ -24,12 +24,50 @@ cd opensentry-dev
 ...
 
 ## Development
-To get up and running in development mode on localhost, you can follow this process:
+To get up and running in development mode on localhost, you can follow this process.
 
-Change `/etc/hosts` on the machine to include
+### Configuration
+
+*Run commands from project root directory*
+
+Copy config files from def to use folder:
+```bash
+cp config/def/* config/use
+```
+
+#### Secrets
+
+The following command generates random secrets and matches them across files.
+```bash
+# LC_TYPE is required on macOS
+LC_CTYPE=C prefix=(mail_ neo4j_ mysql_); for i in "${prefix[@]}"; do PW=$(</dev/urandom tr -dc A-Za-z0-9|head -c96); find config/use -type f -exec sed -i -e "s/\b${i}youreallyneedtochangethis_64\b/${PW:0:64}/" -e "s/\b${i}youreallyneedtochangethis_32\b/${PW:64:32}/" {} \+; done
+```
+
+Next we'll need to add some standalone random secrets
+```
+grep -sire "\byoureallyneedtochangethis_[0-9]*\b" config/use/** | cut -d : -f 1 | while read line; do PW=$(cat /dev/urandom | tr -dc A-Za-z0-9|head -c96); sed -i -e "0,/\byoureallyneedtochangethis_32\b/ s/\byoureallyneedtochangethis_32\b/${PW:0:32}/" -e "0,/\byoureallyneedtochangethis_64\b/ s/\byoureallyneedtochangethis_64\b/${PW:32:64}/" $line; done
+```
+
+Check if it looks correct:
+```bash
+diff -u config/def config/use
+```
+
+#### Domains
+
+Change `/etc/hosts` on the dev machine to include the followina
 ```
 127.0.0.1     localhost oauth.localhost id.localhost aa.localhost me.localhost
 ```
+
+#### Quick replace domains (optional)
+
+To change all configurations urls (localhost), execute within the opensentry-dev root directory:
+```bash
+find config/use -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
+```
+
+*Remember to fix your host file after this operation*
 
 ### Bring all services up
 ```bash
@@ -53,36 +91,6 @@ docker-compose -f docker-compose.services.yml up -d
 
 ### Commands to view logs
 docker-compose -f docker-compose.services.yml logs -f idp idpui aap aapui meui hydra
-
-
-### fast replace
-
-To change all configurations urls (localhost), execute within the opensentry-dev root directory:
-```bash
-find config -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
-```
-
-### Generate random secrets
-
-*Run commands from project root directory*
-
-Copy from def to use folder:
-```bash
-cp config/def/* config/use
-```
-
-```bash
-secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config/use -type f ! -name README\.md -path ./config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_64\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c64`/" {} \;; done
-secrets=("" mail_ neo4j_ mysql_); for i in "${secrets[@]}"; do find config -type f ! -name README\.md -path ./config/def -exec sed -i -e "s/\b`echo $i`youreallyneedtochangethis_32\b/`< /dev/urandom tr -dc A-Za-z0-9 | head -c32`/" {} \;; done
-
-# Keeps passwords the same across files
-LC_CTYPE=C prefix=(mail_ neo4j_ mysql_); for i in "${prefix[@]}"; do PW=$(</dev/urandom tr -dc A-Za-z0-9|head -c96) find config/use -type f -exec sed -i -e "s/\b${i}youreallyneedtochangethis_64\b/${PW:0:64}/" -e "s/\b${i}youreallyneedtochangethis_64\b/${PW:64:32}/" {} \+; done
-```
-
-Check if looks correct:
-```bash
-diff -u config/def config/use
-```
 
 # Useful hydra terminal commands
 
