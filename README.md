@@ -55,7 +55,7 @@ diff -u config/def config/use
 
 #### Domains
 
-Change `/etc/hosts` on the dev machine to include the followina
+Change `/etc/hosts` on the dev machine to include the following
 ```
 127.0.0.1     localhost oauth.localhost id.localhost aa.localhost me.localhost
 ```

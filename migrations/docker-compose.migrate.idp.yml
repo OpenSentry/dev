@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     entrypoint: ""
     command:
-      go run main.go --migrate
+      ./idp --migrate
     networks:
       - lockdown
     environment:
@@ -16,8 +16,8 @@ services:
       - CONFIG_APP_PATH=/app.yml
     volumes:
       - ../../idp/model:/go/src/github.com/opensentry/idp/model
-      - ../config/discovery.yml:/discovery.yml
-      - ../config/idp.yml:/app.yml
+      - ../config/use/discovery.yml:/discovery.yml
+      - ../config/use/idp.yml:/app.yml
     #user: "1000"
     restart: "no"
 

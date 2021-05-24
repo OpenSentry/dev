@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     entrypoint: ""
     command:
-      go run main.go --migrate
+      ./aap --migrate
     networks:
       - lockdown
     environment:
@@ -16,8 +16,8 @@ services:
       - CONFIG_APP_PATH=/app.yml
     volumes:
       - ../../aap/model:/go/src/github.com/opensentry/aap/model
-      - ../config/discovery.yml:/discovery.yml
-      - ../config/aap.yml:/app.yml
+      - ../config/use/discovery.yml:/discovery.yml
+      - ../config/use/aap.yml:/app.yml
     #user: "1000"
     restart: "no"
 
