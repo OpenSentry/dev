@@ -1,0 +1,29 @@
+csrf:
+  authkey: hhW72ggxilvfLH/EhEWS0lcrzQZo0tbFL1BU4tCDa/hMcXTLdHY2TMPb2Wiw9xcu2FeUuzWLDDtSXaF4b5//CQ==
+log:
+  debug: 1
+  format: default
+oauth2:
+  callback: https://openidconnect.net/callback
+  client:
+    id: 20f2bfc6-44df-424a-b490-c024d009892c
+    secret: NnlRuqL/bNRxxIPxX7kLrbN8WCG22VUmpBqVBGgLTnyLdjobHUnUlVyEhiFjJSU/7HON16nii/khEZwWDwcCRA==
+  scopes:
+    required:
+    - openid
+    - idp:read:identities
+    - idp:read:humans
+    - aap:read:scopes
+    - aap:read:grants
+provider:
+  name: OIDC Playground
+serve:
+  public:
+    port: 443
+  tls:
+    cert:
+      path: /srv/certs/meui-cert.pem
+    key:
+      path: /srv/certs/meui-key.pem
+session:
+  authkey: QnnbGUTr16GdD3u6y+AlWqW31EvsQPhMiSub/9Q2KbAiO+6l9PdDkfRF0Vr9QpQEA3T2kkuYy/hxP42WLXyNAQ==

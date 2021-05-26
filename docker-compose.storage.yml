@@ -9,7 +9,7 @@ services:
     deploy:
       endpoint_mode: "dnsrr"
     env_file:
-      - ./config/mysql.env
+      - ./config/use/mysql.env
     networks:
       - lockdown
     user: "1000"
@@ -24,7 +24,7 @@ services:
     volumes:
       - ./neo4jdata:/data
     env_file:
-      - ./config/neo4j.env
+      - ./config/use/neo4j.env
     networks:
       - lockdown
       - public

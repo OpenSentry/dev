@@ -9,7 +9,7 @@ services:
     networks:
       - lockdown
     volumes:
-      - ../config/hydra.yml:/hydra.yml
+      - ../config/use/hydra.yml:/hydra.yml
     user: "1000"
     restart: "no"
 

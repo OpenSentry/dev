@@ -5,12 +5,13 @@ services:
   create-clients:
     image: charmixer/hydra-tools:0.0.0
     volumes:
-      - ../config/clients.yml:/in.yml
-      - ../config/aapui.yml:/aapui.yml
-      - ../config/aap.yml:/aap.yml
-      - ../config/idpui.yml:/idpui.yml
-      - ../config/idp.yml:/idp.yml
-      - ../config/meui.yml:/meui.yml
+      - ../config/use/clients.yml:/in.yml
+      - ../config/use/aapui.yml:/aapui.yml
+      - ../config/use/aap.yml:/aap.yml
+      - ../config/use/idpui.yml:/idpui.yml
+      - ../config/use/idp.yml:/idp.yml
+      - ../config/use/meui.yml:/meui.yml
+      - ../config/use/oidc.yml:/oidc.yml
     command: hydra-tools
     networks:
       - lockdown
