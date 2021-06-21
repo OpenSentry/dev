@@ -38,6 +38,9 @@ cp config/def/* config/use
 #### Secrets
 
 The following command generates random secrets and matches them across files.
+
+##### Linux
+The following command generates random secrets and matches them across files.
 ```bash
 # LC_TYPE is required on macOS
 LC_CTYPE=C prefix=(mail_ neo4j_ mysql_); for i in "${prefix[@]}"; do PW=$(</dev/urandom tr -dc A-Za-z0-9|head -c96); find config/use -type f -exec sed -i -e "s/\b${i}youreallyneedtochangethis_64\b/${PW:0:64}/" -e "s/\b${i}youreallyneedtochangethis_32\b/${PW:64:32}/" {} \+; done
@@ -46,6 +49,17 @@ LC_CTYPE=C prefix=(mail_ neo4j_ mysql_); for i in "${prefix[@]}"; do PW=$(</dev/
 Next we'll need to add some standalone random secrets
 ```
 grep -sire "\byoureallyneedtochangethis_[0-9]*\b" config/use/** | cut -d : -f 1 | while read line; do PW=$(cat /dev/urandom | tr -dc A-Za-z0-9|head -c96); sed -i -e "0,/\byoureallyneedtochangethis_32\b/ s/\byoureallyneedtochangethis_32\b/${PW:0:32}/" -e "0,/\byoureallyneedtochangethis_64\b/ s/\byoureallyneedtochangethis_64\b/${PW:32:64}/" $line; done
+```
+
+##### MacOS
+```bash
+# LC_TYPE is required on macOS
+LC_CTYPE=C prefix=(mail_ neo4j_ mysql_); for i in "${prefix[@]}"; do PW=$(</dev/urandom tr -dc A-Za-z0-9|head -c96); find config/use -type f -exec sed -i '' -e "s/${i}youreallyneedtochangethis_64/${PW:0:64}/" -e "s/${i}youreallyneedtochangethis_32/${PW:64:32}/" {} \;; done
+```
+
+Next we'll need to add some standalone random secrets
+```
+grep -sire "youreallyneedtochangethis_[0-9]*" config/use/** | cut -d : -f 1 | while read line; do PW=$(cat /dev/urandom | tr -dc A-Za-z0-9|head -c96); sed -i '' -e "1,/youreallyneedtochangethis_32/ s/youreallyneedtochangethis_32/${PW:0:32}/" -e "1,/youreallyneedtochangethis_64/ s/youreallyneedtochangethis_64/${PW:32:64}/" $line; done
 ```
 
 Check if it looks correct:
