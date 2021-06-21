@@ -15,8 +15,8 @@ git clone https://github.com/opensentry/idpui.git
 git clone https://github.com/opensentry/aap.git
 git clone https://github.com/opensentry/aapui.git
 git clone https://github.com/opensentry/meui.git
-git clone https://github.com/opensentry/opensentry-dev.git
-cd opensentry-dev
+git clone https://github.com/opensentry/dev.git
+cd dev
 ```
 
 
@@ -62,7 +62,7 @@ Change `/etc/hosts` on the dev machine to include the following
 
 #### Quick replace domains (optional)
 
-To change all configurations urls (localhost), execute within the opensentry-dev root directory:
+To change all configurations urls (localhost), execute within the dev root directory:
 ```bash
 find config/use -type f -exec sed -i -e s/aa.localhost/aa.test.com/g -e s/id.localhost/id.test.com/g -e s/oauth.localhost/oauth.test.com/g -e s/me.localhost/me.test.com/g {} \;
 ```
