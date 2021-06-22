@@ -19,10 +19,6 @@ git clone https://github.com/opensentry/dev.git
 cd dev
 ```
 
-
-## Production [Under construction]
-...
-
 ## Development
 To get up and running in development mode on localhost, you can follow this process.
 
@@ -36,8 +32,6 @@ cp config/def/* config/use
 ```
 
 #### Secrets
-
-The following command generates random secrets and matches them across files.
 
 ##### Linux
 The following command generates random secrets and matches them across files.
