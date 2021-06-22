@@ -87,5 +87,16 @@
     "output_name": "meui",
     "expire_days": 365,
     "skip_if_found": true
+  },{
+    "country": "DK",
+    "state": "Zealand",
+    "locality": "localhost",
+    "organization": "OpenSentry",
+    "organization_unit": "neo4j",
+    "common_name": "neo4j.localhost",
+    "domains": ["neo4j"],
+    "output_name": "neo4j",
+    "expire_days": 365,
+    "skip_if_found": true
   }
 ]
