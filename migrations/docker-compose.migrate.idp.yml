@@ -18,6 +18,8 @@ services:
       - ../../idp/model:/go/src/github.com/opensentry/idp/model
       - ../config/use/discovery.yml:/discovery.yml
       - ../config/use/idp.yml:/app.yml
+
+      - ./certs/neo4j-cert.pem:/etc/ssl/certs/neo4j.pem
     #user: "1000"
     restart: "no"
 
