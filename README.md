@@ -106,18 +106,37 @@ docker-compose -f docker-compose.services.yml up -d
 ### Commands to view logs
 docker-compose -f docker-compose.services.yml logs -f idp idpui aap aapui meui hydra
 
+# Setup Mutt as a dev mail client
+
+Mutt can be used to see mails from the system (postfix)
+
+## Install
+```
+brew install mutt
+```
+
+## Configuration
+Add a `.muttrc`to your `$HOME` folder with the following content:
+```
+set mbox_type=Maildir
+set folder=~/Maildir/dev
+set spoolfile=+/
+set header_cache=~/.cache/mutt
+```
+
+
 # Useful hydra terminal commands
 
 curl -X DELETE http://oauth.localhost:4445/oauth2/auth/sessions/consent?subject=user1 -H 'Accept: application/json'
 
 ## Token introspection
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify token introspect $TOKEN
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra token introspect --skip-tls-verify$TOKEN
 
 ## List clients
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify clients list
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra clients list --skip-tls-verify
 
 ## Show client
-docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra --skip-tls-verify clients get $CLIENT_ID
+docker run --rm -it -e HYDRA_ADMIN_URL=https://hydra:4445 --network opensentry_trusted oryd/hydra clients get --skip-tls-verify $CLIENT_ID
 
 ## Delete client
-docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network opensentry_trusted oryd/hydra clients delete $CLIENT_ID
+docker run --rm -it -e HYDRA_ADMIN_URL=http://hydra:4445 --network opensentry_trusted oryd/hydra clients delete --skip-tls-verify $CLIENT_ID
