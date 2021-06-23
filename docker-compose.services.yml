@@ -72,7 +72,7 @@ services:
       - "443:443" # proxy
     sysctls: # allows unprivileged user to listen on 443 (works on linux, otherwise use root user)
       net.ipv4.ip_unprivileged_port_start: 0
-    user: "1000"
+    # user: "1000"
     restart: on-failure
 
   hydra:
@@ -120,10 +120,12 @@ services:
       - lockdown
     volumes:
         # Source code
-      - ../idp:/go/src/github.com/opensentry/idp
-      - ../idpui:/go/src/github.com/opensentry/idpui
-      - ../aap:/go/src/github.com/opensentry/aap
-      - ../aapui:/go/src/github.com/opensentry/aapui
+      # HACK: Mac locks some folder if added seperately
+      - ../:/go/src/github.com/opensentry
+      # - ../idp:/go/src/github.com/opensentry/idp
+      # - ../idpui:/go/src/github.com/opensentry/idpui
+      # - ../aap:/go/src/github.com/opensentry/aap
+      # - ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configurations
       - ./config/use/discovery.yml:/discovery.yml
@@ -166,10 +168,12 @@ services:
       - trusted
     volumes:
         # Source code
-      - ../idp:/go/src/github.com/opensentry/idp
-      - ../idpui:/go/src/github.com/opensentry/idpui
-      - ../aap:/go/src/github.com/opensentry/aap
-      - ../aapui:/go/src/github.com/opensentry/aapui
+      # HACK: Mac locks some folder if added seperately
+      - ../:/go/src/github.com/opensentry
+      #- ../idpui:/go/src/github.com/opensentry/idpui
+      #- ../idp:/go/src/github.com/opensentry/idp
+      #- ../aap:/go/src/github.com/opensentry/aap
+      #- ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configuration
       - ./config/use/discovery.yml:/discovery.yml
@@ -209,11 +213,14 @@ services:
       - trusted
       - lockdown
     volumes:
-        # Source code
-      - ../idp:/go/src/github.com/opensentry/idp
-      - ../idpui:/go/src/github.com/opensentry/idpui
-      - ../aap:/go/src/github.com/opensentry/aap
-      - ../aapui:/go/src/github.com/opensentry/aapui
+      # Source code
+      # HACK: Mac locks some folder if added seperately
+      - ../:/go/src/github.com/opensentry
+
+      #- ../idp:/go/src/github.com/opensentry/idp
+      #- ../idpui:/go/src/github.com/opensentry/idpui
+      #- ../aap:/go/src/github.com/opensentry/aap
+      #- ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configurations
       - ./config/use/discovery.yml:/discovery.yml
@@ -254,11 +261,14 @@ services:
     networks:
       - trusted
     volumes:
-        # Source code
-      - ../idp:/go/src/github.com/opensentry/idp
-      - ../idpui:/go/src/github.com/opensentry/idpui
-      - ../aap:/go/src/github.com/opensentry/aap
-      - ../aapui:/go/src/github.com/opensentry/aapui
+      # Source code
+      # HACK: Mac locks some folder if added seperately
+      - ../:/go/src/github.com/opensentry
+
+      #- ../idp:/go/src/github.com/opensentry/idp
+      #- ../idpui:/go/src/github.com/opensentry/idpui
+      #- ../aap:/go/src/github.com/opensentry/aap
+      #- ../aapui:/go/src/github.com/opensentry/aapui
 
         # Configurations
       - ./config/use/discovery.yml:/discovery.yml
@@ -288,12 +298,15 @@ services:
     networks:
       - untrusted
     volumes:
-        # Source code
-      - ../idp:/go/src/github.com/opensentry/idp
-      - ../idpui:/go/src/github.com/opensentry/idpui
-      - ../aap:/go/src/github.com/opensentry/aap
-      - ../aapui:/go/src/github.com/opensentry/aapui
-      - ../meui:/go/src/github.com/opensentry/meui
+      # Source code
+      # HACK: Mac locks some folder if added seperately
+      - ../:/go/src/github.com/opensentry
+
+      #- ../idp:/go/src/github.com/opensentry/idp
+      #- ../idpui:/go/src/github.com/opensentry/idpui
+      #- ../aap:/go/src/github.com/opensentry/aap
+      #- ../aapui:/go/src/github.com/opensentry/aapui
+      #- ../meui:/go/src/github.com/opensentry/meui
 
         # Configurations
       - ./config/use/discovery.yml:/discovery.yml
